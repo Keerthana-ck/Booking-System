@@ -241,4 +241,6 @@ app_license = "unlicense"
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
+fixtures = [
+    {"doctype": "Role", "filters": [["role_name", "in", ["Manager"]]]}
+]
