@@ -23,16 +23,26 @@ class Booking(Document):
 
 
     def validate_booking(self):
-        if frappe.db.exists(
-            "Booking",
-            {
-                "resource": self.resource,
-                "start_time": self.start_time,
-                "end_time": self.end_time,
-                "status": "Approved",
-            },
-        ):
-            frappe.throw(_("Resource {0} is already booked for this time slot").format(self.resource))
+        overlapping = frappe.db.sql("""
+            SELECT name
+            FROM `tabBooking`
+            WHERE resource = %(resource)s
+              AND status IN ('Approved', 'Pending')
+              AND name != %(name)s
+              AND (
+                    (start_time < %(end_time)s AND end_time > %(start_time)s)
+                  )
+        """, {
+            "resource": self.resource,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "name": self.name or "New Booking"
+        }, as_dict=True)
+
+        if overlapping:
+            frappe.throw(
+                _("Resource {0} is already booked during this time slot").format(self.resource)
+            )
 
 
 @frappe.whitelist()
