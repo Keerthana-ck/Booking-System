@@ -46,7 +46,7 @@ app_license = "unlicense"
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
-# doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+doctype_calendar_js = {"Booking" : "public/js/booking_calendar.js"}
 
 # Svg Icons
 # ------------------

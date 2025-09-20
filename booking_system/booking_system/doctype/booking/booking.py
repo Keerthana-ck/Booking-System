@@ -5,6 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils import get_datetime
+import hashlib
 
 class Booking(Document):
 
@@ -32,3 +33,25 @@ class Booking(Document):
             },
         ):
             frappe.throw(_("Resource {0} is already booked for this time slot").format(self.resource))
+
+
+@frappe.whitelist()
+def get_booking_events(start, end, filters=None):
+    events = []
+    booking_plans = frappe.get_all(
+        "Booking",
+        fields=["name", "type", "resource", "user", "start_time", "end_time", "posting_date"],
+        filters={"posting_date": ["between", [start, end]]}
+    )
+
+    for booking in booking_plans:
+        color = "#" + hashlib.md5(booking.type.encode()).hexdigest()[:6]
+        events.append({
+            "id": booking.name,
+            "title": f"{booking.user} ({booking.type})",
+            "start": booking.start_time,
+            "end": booking.end_time,
+            "color": color
+        })
+
+    return events
