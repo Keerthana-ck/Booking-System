@@ -242,5 +242,8 @@ app_license = "unlicense"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 fixtures = [
-    {"doctype": "Role", "filters": [["role_name", "in", ["Manager"]]]}
+    {"doctype": "Role", "filters": [["role_name", "in", ["Manager"]]]},
+    {"dt": "Workflow State", "filters": [["name", "in", ["Pending", "Review", "Approved", "Rejected"]]]},
+    {"dt": "Workflow", "filters": [["name", "in", ["Booking"]]]},
+    {"dt": "Workflow Action Master", "filters": [["name", "in", ["Review", "Approve", "Reject"]]]},
 ]

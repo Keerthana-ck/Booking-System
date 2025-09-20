@@ -32,22 +32,29 @@
    "reqd": 1
   },
   {
+   "default": "Pending",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "\nPending\nApproved\nRejected",
+   "options": "Pending\nApproved\nRejected",
+   "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "start_time",
    "fieldtype": "Datetime",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Start Time",
    "reqd": 1
   },
   {
    "fieldname": "end_time",
    "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "End Time"
   },
   {
@@ -65,13 +72,14 @@
    "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Posting Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-18 17:23:10.384474",
+ "modified": "2025-09-20 10:45:36.732269",
  "modified_by": "Administrator",
  "module": "Booking System",
  "name": "Booking",
