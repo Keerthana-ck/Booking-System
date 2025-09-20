@@ -5,6 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils import get_datetime
+import hashlib
 
 class Booking(Document):
 
@@ -22,13 +23,45 @@ class Booking(Document):
 
 
     def validate_booking(self):
-        if frappe.db.exists(
-            "Booking",
-            {
-                "resource": self.resource,
-                "start_time": self.start_time,
-                "end_time": self.end_time,
-                "status": "Approved",
-            },
-        ):
-            frappe.throw(_("Resource {0} is already booked for this time slot").format(self.resource))
+        overlapping = frappe.db.sql("""
+            SELECT name
+            FROM `tabBooking`
+            WHERE resource = %(resource)s
+              AND status IN ('Approved', 'Pending')
+              AND name != %(name)s
+              AND (
+                    (start_time < %(end_time)s AND end_time > %(start_time)s)
+                  )
+        """, {
+            "resource": self.resource,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "name": self.name or "New Booking"
+        }, as_dict=True)
+
+        if overlapping:
+            frappe.throw(
+                _("Resource {0} is already booked during this time slot").format(self.resource)
+            )
+
+
+@frappe.whitelist()
+def get_booking_events(start, end, filters=None):
+    events = []
+    booking_plans = frappe.get_all(
+        "Booking",
+        fields=["name", "type", "resource", "user", "start_time", "end_time", "posting_date"],
+        filters={"posting_date": ["between", [start, end]]}
+    )
+
+    for booking in booking_plans:
+        color = "#" + hashlib.md5(booking.type.encode()).hexdigest()[:6]
+        events.append({
+            "id": booking.name,
+            "title": f"{booking.user} ({booking.type})",
+            "start": booking.start_time,
+            "end": booking.end_time,
+            "color": color
+        })
+
+    return events
