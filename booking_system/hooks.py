@@ -246,4 +246,5 @@ fixtures = [
     {"dt": "Workflow State", "filters": [["name", "in", ["Pending", "Review", "Approved", "Rejected"]]]},
     {"dt": "Workflow", "filters": [["name", "in", ["Booking"]]]},
     {"dt": "Workflow Action Master", "filters": [["name", "in", ["Review", "Approve", "Reject"]]]},
+    {"dt": "Web Form", "filters": [["name","in",["Booking"]]]}
 ]
