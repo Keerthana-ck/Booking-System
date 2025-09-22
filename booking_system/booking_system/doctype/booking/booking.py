@@ -11,6 +11,7 @@ class Booking(Document):
 
     def validate(self):
         self.validate_booking()
+        self.validate_start_end_time()
 
     def on_update(self):
         self.send_status_change_email()
@@ -71,6 +72,12 @@ class Booking(Document):
                         reference_doctype=self.doctype,
                         reference_name=self.name
                     )
+
+    def validate_start_end_time(self):
+        """Validate start time and end time"""
+        if self.start_time and self.end_time:
+            if self.end_time <= self.start_time:
+                frappe.throw(_("End Time must be greater than Start Time"))
 
 
 @frappe.whitelist()
