@@ -23,6 +23,7 @@ class Booking(Document):
 
 
     def validate_booking(self):
+        """Validate Booking """
         overlapping = frappe.db.sql("""
             SELECT name
             FROM `tabBooking`
@@ -47,6 +48,7 @@ class Booking(Document):
 
 @frappe.whitelist()
 def get_booking_events(start, end, filters=None):
+    """Get Booking Details for Calender View """
     events = []
     booking_plans = frappe.get_all(
         "Booking",
