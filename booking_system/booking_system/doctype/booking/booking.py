@@ -12,6 +12,9 @@ class Booking(Document):
     def validate(self):
         self.validate_booking()
 
+    def on_update(self):
+        self.send_status_change_email()
+
     def autoname(self):
 	    """Generate Booking ID automatically"""
 	    if self.resource and self.user and self.posting_date:
@@ -44,6 +47,30 @@ class Booking(Document):
             frappe.throw(
                 _("Resource {0} is already booked during this time slot").format(self.resource)
             )
+
+
+    def send_status_change_email(self):
+        if self.user:
+            if frappe.db.exists("Customer", self.user):
+                customer = frappe.get_doc("Customer", self.user)
+                if customer.customer_primary_address:
+                    customer_email = frappe.db.get_value("Address", customer.customer_primary_address, "email_id")
+                    if not customer_email:
+                        return
+                    subject = f"Your Booking {self.name} is now {self.workflow_state}"
+                    message = f"""
+                        <p>Dear {self.user},</p>
+                        <p>Your booking <b>{self.name}</b> status has been updated to: <b>{self.workflow_state}</b>.</p>
+                        <p>Thank you,<br>Team</p>
+                    """
+
+                    frappe.sendmail(
+                        recipients=[customer_email],
+                        subject=subject,
+                        message=message,
+                        reference_doctype=self.doctype,
+                        reference_name=self.name
+                    )
 
 
 @frappe.whitelist()
